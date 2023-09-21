@@ -75,13 +75,10 @@ class ExcepInOutComponent extends StatelessWidget {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        Align(
-                          alignment: Alignment.topCenter,
-                          child: Text(
-                            "${TripDB.getCountOfExitStatException()}",
-                            style: const TextStyle(
-                              fontSize: 22,
-                            ),
+                        Text(
+                          "${TripDB.getCountOfExitStatException()}",
+                          style: const TextStyle(
+                            fontSize: 22,
                           ),
                         )
                       ],

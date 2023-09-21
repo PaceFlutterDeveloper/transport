@@ -17,6 +17,7 @@ void main() async {
   await Hive.openBox<Student>(students);
   Hive.registerAdapter<TripModel>(TripModelAdapter());
   await Hive.openBox<TripModel>(studTrip);
+  await Hive.openBox('trip_data');
 
   // Initialize dependencies
   serviceLocators();

@@ -1,7 +1,10 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 import 'package:transport_app/data/resource/local/local_db.dart';
 import 'package:transport_app/data/resource/remote/api_service.dart';
@@ -15,15 +18,21 @@ import 'nfc_provider.dart';
 
 class TransportProvider with ChangeNotifier {
   final Repository _repository = locator<Repository>();
+
   late TransportModel _transportModel;
   ResDataState getBusDataState =
       ResDataState(dataState: DataState.Uninitialized);
   ResDataState startTripState =
       ResDataState(dataState: DataState.Uninitialized);
   Bus? selectedBus;
-
   Trip? selectedTrip;
 
+  final Location location = Location();
+  late Box tripDataBox;
+  late StreamSubscription<LocationData> locationSubscription;
+  TransportProvider() {
+    tripDataBox = Hive.box('trip_data');
+  }
   TransportModel get transportModel => _transportModel;
 
   //get bus and trip mode by passing the phone imei number
@@ -43,6 +52,18 @@ class TransportProvider with ChangeNotifier {
       }
     }
     notifyListeners();
+  }
+
+  locationDataCollection() async {
+    locationSubscription = location.onLocationChanged.listen((locationData) {
+      final tripPoint = {
+        'latitude': locationData.latitude,
+        'longitude': locationData.longitude,
+        "bus_id": selectedBus!.busId,
+        'timestamp': DateTime.now().toUtc().toString(),
+      };
+      tripDataBox.add(tripPoint);
+    });
   }
 
   setBus(Bus bus) {
@@ -76,9 +97,14 @@ class TransportProvider with ChangeNotifier {
         Provider.of<NfcProvider>(context, listen: false)
             .listenForNFCEvents(context);
         _repository.fetchStudents(tripId: res.right);
+
         startTripState = ResDataState(dataState: DataState.Loaded);
       }
     }
     notifyListeners();
+  }
+
+  stopTrip() {
+    locationSubscription.cancel();
   }
 }

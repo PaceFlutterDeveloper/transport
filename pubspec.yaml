@@ -46,12 +46,15 @@ dependencies:
   google_fonts: ^4.0.4
   intl: ^0.18.1
   nfc_manager: ^3.2.0
-  geolocator: ^9.0.2
+  geolocator: ^10.0.1
   fluttertoast: ^8.2.1
   audioplayers: ^4.0.1
   flutter_local_notifications: ^14.1.0
   cron: ^0.5.1
   equatable: ^2.0.5
+  location: ^5.0.3
+  web_socket_channel: ^2.4.0
+  socket_io: ^1.0.1
 
 dev_dependencies:
   flutter_test:
